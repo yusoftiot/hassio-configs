@@ -1,0 +1,109 @@
+## this part goes in your Automations.yaml ##
+
+- alias: window open when quietcool fan is on
+  id: openwindowwhenquietcoolfanison2875478945y34y
+  trigger: 
+    - platform: state
+      entity_id: switch.quietcool_low
+      from: 'off'
+      to: 'on'      
+    - platform: state
+      entity_id: switch.quietcool_med
+      from: 'off'
+      to: 'on'
+    - platform: state
+      entity_id: switch.quietcool_high
+      from: 'off'
+      to: 'on'
+  condition:
+      - condition: state
+        entity_id: binary_sensor.theater_windows
+        state: 'off'
+  action:
+    - service: cover.open_cover
+      entity_id: cover.window_control
+- alias: window close when quietcool fan is off
+  id: openwindowwhenquietcoolfanisoff28543545345345
+  trigger: 
+    - platform: state
+      entity_id: switch.quietcool_low
+      from: 'on'
+      to: 'off'      
+    - platform: state
+      entity_id: switch.quietcool_med
+      from: 'on'
+      to: 'off'
+    - platform: state
+      entity_id: switch.quietcool_high
+      from: 'on'
+      to: 'off'
+  condition:
+      - condition: state
+        entity_id: binary_sensor.theater_windows
+        state: 'on'
+  action:
+    - service: cover.close_cover
+      entity_id: cover.window_control
+- alias: temperature to start quietcool fan 
+  id: temptostartqcfan7487238945y
+  trigger:
+    - platform: time
+      at: '07:00:00'
+    - platform: time
+      at: '20:00:00'
+  condition:
+    - condition: numeric_state
+      entity_id: sensor.yr_temperature
+      above: 50
+      below: 68
+    - condition: numeric_state
+      entity_id: sensor.upstairs_temp
+      above: 70
+  action:
+    - service: notify.ios_justin_iphone7
+      data: 
+        title: It's really nice outside
+        message: Shall I open the window and turn on the fan?
+        data:
+          push:
+            category: "quietcool"     
+- alias: QCfanlow
+  id: qcfanlow234234234
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: QC_LOW
+  action:
+    - service: switch.turn_on
+      entity_id: switch.quietcool_low
+    - delay: 01:00:00
+    - service: switch.turn_off
+      entity_id: switch.quietcool_low
+- alias: QCfanMed
+  id: qcfanmed234234234
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: QC_MED
+  action:
+    - service: switch.turn_on
+      entity_id: switch.quietcool_med
+    - delay: 01:00:00
+    - service: switch.turn_off
+      entity_id: switch.quietcool_med
+- alias: QCfanHigh
+  id: qcfanhigh234234234
+  trigger:
+    platform: event
+    event_type: ios.notification_action_fired
+    event_data:
+      actionName: QC_HIGH
+  action:
+    - service: switch.turn_on
+      entity_id: switch.quietcool_high
+    - delay: 01:00:00
+    - service: switch.turn_off
+      entity_id: switch.quietcool_high
+
